@@ -2,7 +2,7 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-const contactsRouter = require("./routes/api/contacts");
+const productsRouter = require("./routes/api/products");
 const categoriesRouter = require("./routes/api/categories");
 
 const app = express();
@@ -13,7 +13,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/contacts", contactsRouter);
+app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
 
 app.use((req, res) => {
