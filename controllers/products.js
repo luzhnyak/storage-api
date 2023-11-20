@@ -14,13 +14,13 @@ const knex = require("knex")({
 
 const getAllProducts = async (req, res) => {
   const PER_PAGE = 12;
-  const { page = 1, cat_id = 0 } = req.query;
+  const { page = 1, category_id: categoryId = 0 } = req.query;
 
   let result;
 
-  if (cat_id) {
+  if (categoryId) {
     result = await knex("products")
-      .where("category_id", cat_id)
+      .where("category_id", categoryId)
       .select("id", "name", "price", "image", "category_id");
   } else {
     result = await knex("products").select(
@@ -32,9 +32,13 @@ const getAllProducts = async (req, res) => {
     );
   }
 
-  const total_page = Math.ceil(result.length / PER_PAGE);
+  if (page === "0") {
+    res.json(result);
+  }
 
-  if (page > total_page) {
+  const totalPage = Math.ceil(result.length / PER_PAGE);
+
+  if (page > totalPage) {
     throw HttpError(404, "Not found");
   }
 

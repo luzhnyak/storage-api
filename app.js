@@ -5,6 +5,7 @@ const cors = require("cors");
 const productsRouter = require("./routes/api/products");
 const categoriesRouter = require("./routes/api/categories");
 const brandsRouter = require("./routes/api/brands");
+const orderRouter = require("./routes/api/orders");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/brands", brandsRouter);
+app.use("/api/orders", orderRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
