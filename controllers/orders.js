@@ -28,11 +28,23 @@ const getOrderById = async (req, res) => {
     .where("order_id", orderId)
     .select("*");
 
+  const fullOrderProducts = await Promise.all(
+    orderProducts.map(async ({ product_id, order_id, quantity, price }) => {
+      const product = await knex("products").where("id", product_id).first();
+      return { name: product.name, order_id, product_id, quantity, price };
+    })
+  );
+
+  const suma = orderProducts.reduce(
+    (total, product) => total + product.quantity * product.price,
+    0
+  );
+
   if (!order) {
     throw HttpError(404, "Not found");
   }
 
-  const data = { order: order, order_products: orderProducts };
+  const data = { ...order, suma: suma, order_products: fullOrderProducts };
 
   res.json(data);
 };
