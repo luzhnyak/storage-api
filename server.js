@@ -11,6 +11,6 @@ const knex = require("knex")({
   useNullAsDefault: true,
 });
 
-app.listen(3000);
+app.listen(5000);
 
 module.exports = knex;

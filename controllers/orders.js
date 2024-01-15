@@ -72,18 +72,38 @@ const addProductToOrder = async (req, res) => {
     .where("product_id", req.body.product_id)
     .first();
 
+  let ids;
+
   if (orderProduct) {
-    throw HttpError(400, "This product is already present in the order");
+    // throw HttpError(400, "This product is already present in the order");
+
+    await knex("order_products")
+      .where("id", orderProduct.id)
+      .update({
+        quantity: Number(req.body.quantity),
+        price: Number(req.body.price),
+      });
+
+    ids = [orderProduct.id];
+  } else {
+    ids = await knex("order_products").insert({
+      order_id: orderId,
+      ...req.body,
+    });
   }
 
-  const ids = await knex("order_products").insert({
-    order_id: orderId,
-    ...req.body,
-  });
+  const orderProducts = await knex("order_products")
+    .where("order_id", orderId)
+    .select("*");
+
+  const suma = orderProducts.reduce(
+    (total, product) => total + product.quantity * product.price,
+    0
+  );
 
   await knex("orders")
     .where("id", orderId)
-    .update({ date_modified: Date.now() });
+    .update({ suma: suma, date_modified: Date.now() });
 
   const result = await knex("order_products").where("id", ids[0]).first();
 
