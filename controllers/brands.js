@@ -1,21 +1,17 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-const DB_HOST = "./db/data.db";
-
-const knex = require("knex")({
-  client: "sqlite3",
-  connection: {
-    filename: DB_HOST,
-  },
-  useNullAsDefault: true,
-});
+const Brand = require("../db/models/brand");
 
 // ============================== Get All
 
 const getAllBrands = async (req, res) => {
-  const result = await knex("brands").select("*");
+  const brand = await Brand.findAll();
 
-  res.json(result);
+  if (!brand) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.json(brand);
 };
 
 // ============================== Get by ID
@@ -23,31 +19,39 @@ const getAllBrands = async (req, res) => {
 const getBrandById = async (req, res) => {
   const { id } = req.params;
 
-  const result = await knex("brands").where("id", id).first();
+  const brand = await Brand.findByPk(id);
 
-  if (!result) {
+  if (!brand) {
     throw HttpError(404, "Not found");
   }
 
-  res.json(result);
+  res.json(brand);
 };
 
 // ============================== Add
 
 const addBrand = async (req, res) => {
-  const ids = await knex("brands").insert(req.body);
-  const result = await knex("brands").where("id", ids[0]).first();
+  const brand = await Brand.create(req.body);
 
-  res.status(201).json(result);
+  res.status(201).json(brand);
 };
 
 // ============================== Delete
 
 const removeBrand = async (req, res) => {
   const { id } = req.params;
-  const result = await knex("brands").where("id", id).del();
 
-  if (!result) {
+  let result = 0;
+
+  if (id) {
+    result = await Brand.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+  if (result <= 0) {
     throw HttpError(404, "Not found");
   }
 
@@ -58,15 +62,24 @@ const removeBrand = async (req, res) => {
 
 const updateBrand = async (req, res) => {
   const { id } = req.params;
-  const result = await knex("brands").where("id", id).update(req.body);
 
-  if (!result) {
+  let result;
+
+  if (id) {
+    result = await Brand.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  if (result[0] <= 0) {
     throw HttpError(404, "Not found");
   }
 
-  const updated = await knex("brands").where("id", id).first();
+  const brand = await Brand.findByPk(id);
 
-  res.json(updated);
+  res.json(brand);
 };
 
 module.exports = {

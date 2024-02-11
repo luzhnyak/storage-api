@@ -1,36 +1,39 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-const DB_HOST = "./db/data.db";
-
-const knex = require("knex")({
-  client: "sqlite3",
-  connection: {
-    filename: DB_HOST,
-  },
-  useNullAsDefault: true,
-});
+const Product = require("../db/models/product");
+const Order = require("../db/models/order");
+const OrderProduct = require("../db/models/orderProduct");
 
 // ============================== Get All
 
 const getAllOrders = async (req, res) => {
-  const result = await knex("orders").select("*");
+  const order = await Order.findAll();
 
-  res.json(result);
+  if (!order) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.json(order);
 };
 
 // ============================== Get by ID
 
 const getOrderById = async (req, res) => {
-  const { orderId } = req.params;
+  const { id } = req.params;
 
-  const order = await knex("orders").where("id", orderId).first();
-  const orderProducts = await knex("order_products")
-    .where("order_id", orderId)
-    .select("*");
+  const order = await Order.findByPk(id);
+
+  if (!order) {
+    throw HttpError(404, "Not found");
+  }
+
+  const orderProducts = await OrderProduct.findAll({
+    where: { order_id: id },
+  });
 
   const fullOrderProducts = await Promise.all(
     orderProducts.map(async ({ product_id, order_id, quantity, price }) => {
-      const product = await knex("products").where("id", product_id).first();
+      const product = await Product.findByPk(product_id);
       return { name: product.name, order_id, product_id, quantity, price };
     })
   );
@@ -40,11 +43,11 @@ const getOrderById = async (req, res) => {
     0
   );
 
-  if (!order) {
-    throw HttpError(404, "Not found");
-  }
-
-  const data = { ...order, suma: suma, order_products: fullOrderProducts };
+  const data = {
+    ...order.toJSON(),
+    suma: suma,
+    order_products: fullOrderProducts,
+  };
 
   res.json(data);
 };
@@ -52,82 +55,96 @@ const getOrderById = async (req, res) => {
 // ============================== Add order
 
 const addOrder = async (req, res) => {
-  const ids = await knex("orders").insert({
-    date_added: Date.now(),
-    date_modified: Date.now(),
-    ...req.body,
-  });
-  const result = await knex("orders").where("id", ids[0]).first();
+  const order = await Order.create(req.body);
 
-  res.status(201).json(result);
+  res.status(201).json(order);
 };
 
 // ============================== Add product to order
 
 const addProductToOrder = async (req, res) => {
-  const { orderId } = req.params;
+  const { id } = req.params;
 
-  const orderProduct = await knex("order_products")
-    .where("order_id", orderId)
-    .where("product_id", req.body.product_id)
-    .first();
-
-  let ids;
+  let orderProduct = await OrderProduct.findOne({
+    where: {
+      order_id: id,
+      product_id: req.body.product_id,
+    },
+  });
 
   if (orderProduct) {
-    // throw HttpError(400, "This product is already present in the order");
-
-    await knex("order_products")
-      .where("id", orderProduct.id)
-      .update({
+    await OrderProduct.update(
+      {
         quantity: Number(req.body.quantity),
         price: Number(req.body.price),
-      });
+      },
+      {
+        where: {
+          id: orderProduct.id,
+        },
+      }
+    );
 
-    ids = [orderProduct.id];
+    orderProduct = await OrderProduct.findByPk(orderProduct.id);
   } else {
-    ids = await knex("order_products").insert({
-      order_id: orderId,
+    orderProduct = await OrderProduct.create({
+      order_id: id,
       ...req.body,
     });
   }
 
-  const orderProducts = await knex("order_products")
-    .where("order_id", orderId)
-    .select("*");
+  const orderProducts = await OrderProduct.findAll({
+    where: {
+      order_id: id,
+    },
+  });
 
   const suma = orderProducts.reduce(
     (total, product) => total + product.quantity * product.price,
     0
   );
 
-  await knex("orders")
-    .where("id", orderId)
-    .update({ suma: suma, date_modified: Date.now() });
+  await Order.update(
+    {
+      suma: suma,
+      date_modified: Date.now(),
+    },
+    {
+      where: {
+        id,
+      },
+    }
+  );
 
-  const result = await knex("order_products").where("id", ids[0]).first();
-
-  res.status(201).json(result);
+  res.status(201).json(orderProduct);
 };
 
 // ============================== Delete order
 
 const removeOrder = async (req, res) => {
-  const { orderId } = req.params;
+  const { id } = req.params;
 
-  const orderProducts = await knex("order_products")
-    .where("order_id", orderId)
-    .select("*");
-
-  console.log(orderProducts);
-
-  orderProducts.forEach(async (product) => {
-    await knex("order_products").where("id", product.id).del();
+  const orderProducts = await OrderProduct.findAll({
+    where: {
+      order_id: id,
+    },
   });
 
-  const order = await knex("orders").where("id", orderId).del();
+  orderProducts.forEach(async (product) => {
+    await OrderProduct.destroy({
+      where: {
+        id: product.id,
+      },
+    });
+  });
 
-  if (!order) {
+  const result = await Order.destroy({
+    where: {
+      id: id,
+    },
+  });
+
+  if (result <= 0) {
     throw HttpError(404, "Not found");
   }
 

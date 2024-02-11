@@ -1,14 +1,6 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-const DB_HOST = "./db/data.db";
-
-const knex = require("knex")({
-  client: "sqlite3",
-  connection: {
-    filename: DB_HOST,
-  },
-  useNullAsDefault: true,
-});
+const Product = require("../db/models/product");
 
 // ============================== Get All
 
@@ -16,33 +8,26 @@ const getAllProducts = async (req, res) => {
   const PER_PAGE = 12;
   const { page = 1, category_id: categoryId = 0 } = req.query;
 
-  let result;
+  let products;
 
   if (categoryId) {
-    result = await knex("products")
-      .where("category_id", categoryId)
-      .select("id", "name", "price", "image", "category_id");
+    products = await Product.findAll({
+      limit: PER_PAGE,
+      offset: (page - 1) * PER_PAGE,
+      where: { category_id: categoryId },
+    });
   } else {
-    result = await knex("products").select(
-      "id",
-      "name",
-      "price",
-      "image",
-      "category_id"
-    );
+    products = await Product.findAll({
+      limit: PER_PAGE,
+      offset: (page - 1) * PER_PAGE,
+    });
   }
 
-  if (page === "0") {
-    res.json(result);
-  }
-
-  const totalPage = Math.ceil(result.length / PER_PAGE);
-
-  if (page > totalPage) {
+  if (!products) {
     throw HttpError(404, "Not found");
   }
 
-  res.json(result.slice((page - 1) * PER_PAGE, page * PER_PAGE));
+  res.json(products);
 };
 
 // ============================== Get by ID
@@ -50,31 +35,39 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   const { id } = req.params;
 
-  const result = await knex("products").where("id", id).first();
+  const product = await Product.findByPk(id);
 
-  if (!result) {
+  if (!product) {
     throw HttpError(404, "Not found");
   }
 
-  res.json(result);
+  res.json(product);
 };
 
 // ============================== Add
 
 const addProduct = async (req, res) => {
-  const ids = await knex("products").insert(req.body);
-  const result = await knex("products").where("id", ids[0]).first();
+  const product = await Product.create(req.body);
 
-  res.status(201).json(result);
+  res.status(201).json(product);
 };
 
 // ============================== Delete
 
 const removeProduct = async (req, res) => {
   const { id } = req.params;
-  const result = await knex("products").where("id", id).del();
 
-  if (!result) {
+  let result = 0;
+
+  if (id) {
+    result = await Product.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+  if (result <= 0) {
     throw HttpError(404, "Not found");
   }
 
@@ -85,15 +78,24 @@ const removeProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const result = await knex("products").where("id", id).update(req.body);
 
-  if (!result) {
+  let result;
+
+  if (id) {
+    result = await Brand.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  if (result[0] <= 0) {
     throw HttpError(404, "Not found");
   }
 
-  const updated = await knex("products").where("id", id).first();
+  const product = await Product.findByPk(id);
 
-  res.json(updated);
+  res.json(product);
 };
 
 module.exports = {

@@ -1,6 +1,6 @@
 const express = require("express");
 const { validateBody } = require("../../middlewares");
-const { productSchema } = require("../../models/product");
+const { productSchema } = require("../../shemas/product");
 
 const router = express.Router();
 

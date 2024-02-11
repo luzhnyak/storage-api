@@ -1,54 +1,57 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
-// const knex = require("../server");
 
-const DB_HOST = "./db/data.db";
-
-const knex = require("knex")({
-  client: "sqlite3",
-  connection: {
-    filename: DB_HOST,
-  },
-  useNullAsDefault: true,
-});
+const Category = require("../db/models/category");
 
 // ============================== Get All
 
 const getAllCategories = async (req, res) => {
-  const result = await knex("categories").select("*");
+  const category = await Category.findAll();
 
-  res.json(result);
+  if (!category) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.json(category);
 };
 
 // ============================== Get by ID
 
 const getCategoryById = async (req, res) => {
-  const { categoryId } = req.params;
+  const { id } = req.params;
 
-  const result = await knex("categories").where("id", categoryId).first();
+  const category = await Category.findByPk(id);
 
-  if (!result) {
+  if (!category) {
     throw HttpError(404, "Not found");
   }
 
-  res.json(result);
+  res.json(category);
 };
 
 // ============================== Add
 
 const addCategory = async (req, res) => {
-  const id = await knex("categories").insert(req.body);
-  const result = await knex("categories").where("id", id[0]).first();
+  const category = await Category.create(req.body);
 
-  res.status(201).json(result);
+  res.status(201).json(category);
 };
 
 // ============================== Delete
 
 const removeCategory = async (req, res) => {
-  const { categoryId } = req.params;
-  const result = await knex("categories").where("id", categoryId).del();
+  const { id } = req.params;
 
-  if (!result) {
+  let result = 0;
+
+  if (id) {
+    result = await Brand.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+  if (result <= 0) {
     throw HttpError(404, "Not found");
   }
 
@@ -58,18 +61,25 @@ const removeCategory = async (req, res) => {
 // ============================== Update
 
 const updateCategory = async (req, res) => {
-  const { categoryId } = req.params;
-  const result = await knex("categories")
-    .where("id", categoryId)
-    .update(req.body);
+  const { id } = req.params;
 
-  if (!result) {
+  let result;
+
+  if (id) {
+    result = await Category.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  if (result[0] <= 0) {
     throw HttpError(404, "Not found");
   }
 
-  const updated = await knex("categories").where("id", categoryId).first();
+  const category = await Category.findByPk(id);
 
-  res.json(updated);
+  res.json(category);
 };
 
 module.exports = {
