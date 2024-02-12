@@ -1,11 +1,14 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const dotenv = require("dotenv");
 
 const productsRouter = require("./routes/api/products");
 const categoriesRouter = require("./routes/api/categories");
 const brandsRouter = require("./routes/api/brands");
 const orderRouter = require("./routes/api/orders");
+
+dotenv.config();
 
 const app = express();
 

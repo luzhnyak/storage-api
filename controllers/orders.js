@@ -1,4 +1,5 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
+const sequelize = require("../db/config");
 
 const Product = require("../db/models/product");
 const Order = require("../db/models/order");
@@ -104,10 +105,26 @@ const addProductToOrder = async (req, res) => {
     0
   );
 
+  // console.log("suma", suma);
+
+  // try {
+  //   const suma1 = await OrderProduct.sum(
+  //     sequelize.literal("quantity * price"),
+  //     {
+  //       where: {
+  //         order_id: id,
+  //       },
+  //     }
+  //   );
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
+  // console.log("suma1", suma1);
+
   await Order.update(
     {
       suma: suma,
-      date_modified: Date.now(),
     },
     {
       where: {
@@ -154,19 +171,40 @@ const removeOrder = async (req, res) => {
 // ============================== Delete product in order
 
 const removeProductInOrder = async (req, res) => {
-  const { orderId, productId } = req.params;
-  const orderProduct = await knex("order_products")
-    .where("order_id", orderId)
-    .where("product_id", productId)
-    .del();
+  const { id, productId } = req.params;
 
-  if (!orderProduct) {
+  const result = await OrderProduct.destroy({
+    where: {
+      order_id: id,
+      product_id: productId,
+    },
+  });
+
+  if (!result) {
     throw HttpError(404, "Not found");
   }
 
-  await knex("orders")
-    .where("id", orderId)
-    .update({ date_modified: Date.now() });
+  const orderProducts = await OrderProduct.findAll({
+    where: {
+      order_id: id,
+    },
+  });
+
+  const suma = orderProducts.reduce(
+    (total, product) => total + product.quantity * product.price,
+    0
+  );
+
+  await Order.update(
+    {
+      suma: suma,
+    },
+    {
+      where: {
+        id,
+      },
+    }
+  );
 
   res.json({ message: "Product in order deleted" });
 };
@@ -174,42 +212,45 @@ const removeProductInOrder = async (req, res) => {
 // ============================== Update order
 
 const updateOrder = async (req, res) => {
-  const { orderId } = req.params;
-  const order = await knex("orders")
-    .where("id", orderId)
-    .update({ date_modified: Date.now(), ...req.body });
+  const { id } = req.params;
 
-  if (!order) {
+  const result = await Order.update(req.body, {
+    where: {
+      id,
+    },
+  });
+
+  if (!result) {
     throw HttpError(404, "Not found");
   }
 
-  const updatedOrder = await knex("order").where("id", orderId).first();
+  const order = await Order.findByPk(id);
 
-  res.json(updatedOrder);
+  res.json(order);
 };
 
 // ============================== Update product in Order
 
 const updateProductInOrder = async (req, res) => {
-  const { orderId, productId } = req.params;
-  const orderProduct = await knex("order_products")
-    .where("order_id", orderId)
-    .where("product_id", productId)
-    .update(req.body);
+  const { id, productId } = req.params;
 
-  console.log(orderProduct);
-  if (!orderProduct) {
+  const result = await OrderProduct.update(req.body, {
+    where: {
+      order_id: id,
+      product_id: productId,
+    },
+  });
+
+  if (!result) {
     throw HttpError(404, "Not found");
   }
 
-  const updatedProduct = await knex("order_products")
-    .where("order_id", orderId)
-    .where("product_id", productId)
-    .first();
-
-  await knex("orders")
-    .where("id", orderId)
-    .update({ date_modified: Date.now() });
+  const updatedProduct = await Order.findOne({
+    where: {
+      order_id: id,
+      product_id: productId,
+    },
+  });
 
   res.json(updatedProduct);
 };
