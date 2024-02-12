@@ -11,11 +11,17 @@ const getAllProducts = async (req, res) => {
   let products;
 
   if (categoryId) {
-    products = await Product.findAll({
-      limit: PER_PAGE,
-      offset: (page - 1) * PER_PAGE,
-      where: { category_id: categoryId },
-    });
+    if (page != 0) {
+      products = await Product.findAll({
+        limit: PER_PAGE,
+        offset: (page - 1) * PER_PAGE,
+        where: { category_id: categoryId },
+      });
+    } else {
+      products = await Product.findAll({
+        where: { category_id: categoryId },
+      });
+    }
   } else {
     products = await Product.findAll({
       limit: PER_PAGE,

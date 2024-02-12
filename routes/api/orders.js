@@ -15,12 +15,12 @@ router.post("/", validateBody(orderSchema), ctrl.addOrder);
 router.put("/:id", validateBody(orderProductSchema), ctrl.addProductToOrder);
 
 router.delete("/:id", ctrl.removeOrder);
-router.delete("/:orderId/:productId", ctrl.removeProductInOrder);
+router.delete("/:id/:productId", ctrl.removeProductInOrder);
 
 router.put("/:id", validateBody(orderSchema), ctrl.updateOrder);
 
 router.put(
-  "/:orderId/:productId",
+  "/:id/:productId",
   validateBody(orderProductSchema),
   ctrl.updateProductInOrder
 );
