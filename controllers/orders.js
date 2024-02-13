@@ -4,6 +4,7 @@ const sequelize = require("../db/config");
 const Product = require("../db/models/product");
 const Order = require("../db/models/order");
 const OrderProduct = require("../db/models/orderProduct");
+const { refreshSumOrder } = require("../db/services/orders");
 
 // ============================== Get All
 
@@ -39,14 +40,9 @@ const getOrderById = async (req, res) => {
     })
   );
 
-  const suma = orderProducts.reduce(
-    (total, product) => total + product.quantity * product.price,
-    0
-  );
-
   const data = {
     ...order.toJSON(),
-    suma: suma,
+
     order_products: fullOrderProducts,
   };
 
@@ -94,44 +90,7 @@ const addProductToOrder = async (req, res) => {
     });
   }
 
-  const orderProducts = await OrderProduct.findAll({
-    where: {
-      order_id: id,
-    },
-  });
-
-  const suma = orderProducts.reduce(
-    (total, product) => total + product.quantity * product.price,
-    0
-  );
-
-  // console.log("suma", suma);
-
-  // try {
-  //   const suma1 = await OrderProduct.sum(
-  //     sequelize.literal("quantity * price"),
-  //     {
-  //       where: {
-  //         order_id: id,
-  //       },
-  //     }
-  //   );
-  // } catch (error) {
-  //   console.log(error);
-  // }
-
-  // console.log("suma1", suma1);
-
-  await Order.update(
-    {
-      suma: suma,
-    },
-    {
-      where: {
-        id,
-      },
-    }
-  );
+  refreshSumOrder(id);
 
   res.status(201).json(orderProduct);
 };
@@ -184,27 +143,7 @@ const removeProductInOrder = async (req, res) => {
     throw HttpError(404, "Not found");
   }
 
-  const orderProducts = await OrderProduct.findAll({
-    where: {
-      order_id: id,
-    },
-  });
-
-  const suma = orderProducts.reduce(
-    (total, product) => total + product.quantity * product.price,
-    0
-  );
-
-  await Order.update(
-    {
-      suma: suma,
-    },
-    {
-      where: {
-        id,
-      },
-    }
-  );
+  refreshSumOrder(id);
 
   res.json({ message: "Product in order deleted" });
 };
@@ -234,6 +173,8 @@ const updateOrder = async (req, res) => {
 const updateProductInOrder = async (req, res) => {
   const { id, productId } = req.params;
 
+  console.log(req.body);
+
   const result = await OrderProduct.update(req.body, {
     where: {
       order_id: id,
@@ -245,7 +186,9 @@ const updateProductInOrder = async (req, res) => {
     throw HttpError(404, "Not found");
   }
 
-  const updatedProduct = await Order.findOne({
+  refreshSumOrder(id);
+
+  const updatedProduct = await OrderProduct.findOne({
     where: {
       order_id: id,
       product_id: productId,

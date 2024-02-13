@@ -19,7 +19,7 @@ router.delete("/:id/:productId", ctrl.removeProductInOrder);
 
 router.put("/:id", validateBody(orderSchema), ctrl.updateOrder);
 
-router.put(
+router.patch(
   "/:id/:productId",
   validateBody(orderProductSchema),
   ctrl.updateProductInOrder
