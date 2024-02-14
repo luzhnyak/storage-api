@@ -34,9 +34,9 @@ const getOrderById = async (req, res) => {
   });
 
   const fullOrderProducts = await Promise.all(
-    orderProducts.map(async ({ product_id, order_id, quantity, price }) => {
+    orderProducts.map(async ({ id, product_id, order_id, quantity, price }) => {
       const product = await Product.findByPk(product_id);
-      return { name: product.name, order_id, product_id, quantity, price };
+      return { id, name: product.name, order_id, product_id, quantity, price };
     })
   );
 
@@ -92,7 +92,16 @@ const addProductToOrder = async (req, res) => {
 
   refreshSumOrder(id);
 
-  res.status(201).json(orderProduct);
+  const product = await Product.findByPk(orderProduct.product_id);
+
+  res.status(201).json({
+    id,
+    name: product.name,
+    order_id: orderProduct.order_id,
+    product_id: orderProduct.product_id,
+    quantity: orderProduct.quantity,
+    price: orderProduct.price,
+  });
 };
 
 // ============================== Delete order
