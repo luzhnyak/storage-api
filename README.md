@@ -1,2 +1,2 @@
 # storage-api
-GoldFishNet
+storage-api
