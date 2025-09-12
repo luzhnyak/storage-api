@@ -4,12 +4,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const sequelize = new Sequelize({
-  database: process.env.DATABASE_NAME,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  host: process.env.DATABASE_HOST,
+  // database: process.env.DATABASE_NAME,
+  // username: process.env.DATABASE_USERNAME,
+  // password: process.env.DATABASE_PASSWORD,
+  // host: process.env.DATABASE_HOST,
+  storage: "data.db",
   dialect:
-    "mariadb" /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */,
+    "sqlite" /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */,
   dialectOptions: {
     charset: "utf8mb4",
   },
