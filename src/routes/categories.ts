@@ -2,17 +2,18 @@ import express from "express";
 import Category from "../models/Category";
 import { validate } from "../middleware/validate";
 import { categorySchema } from "../schemas/categorySchema";
+import ctrl from "../controllers/categories";
 
 const router = express.Router();
 
-router.get("/", async (_, res) => {
-  const categories = await Category.findAll();
-  res.json(categories);
-});
+router.get("/", ctrl.getAllCategories);
 
-router.post("/", validate(categorySchema), async (req, res) => {
-  const category = await Category.create(req.body);
-  res.status(201).json(category);
-});
+router.get("/:id", ctrl.getCategoryById);
+
+router.post("/", validate(categorySchema), ctrl.addCategory);
+
+router.delete("/:id", ctrl.removeCategory);
+
+router.put("/:id", validate(categorySchema), ctrl.updateCategory);
 
 export default router;

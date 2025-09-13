@@ -3,6 +3,9 @@ import { sequelize } from "../db";
 
 interface OrderAttributes {
   id: number;
+  suma: number;
+  userId: number;
+  contragentId: number;
   customerName: string;
 }
 
@@ -13,6 +16,9 @@ class Order
   implements OrderAttributes
 {
   public id!: number;
+  public userId!: number;
+  public contragentId!: number;
+  public suma!: number;
   public customerName!: string;
 
   public readonly createdAt!: Date;
@@ -26,7 +32,11 @@ Order.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    customerName: { type: DataTypes.STRING(128), allowNull: false },
+    userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    contragentId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    suma: { type: DataTypes.FLOAT, allowNull: false },
+
+    customerName: { type: DataTypes.STRING(128), allowNull: true },
   },
   { sequelize, tableName: "orders" }
 );

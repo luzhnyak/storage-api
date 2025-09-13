@@ -2,17 +2,18 @@ import express from "express";
 import Brand from "../models/Brand";
 import { validate } from "../middleware/validate";
 import { brandSchema } from "../schemas/brandSchema";
+import ctrl from "../controllers/brands";
 
 const router = express.Router();
 
-router.get("/", async (_, res) => {
-  const brands = await Brand.findAll();
-  res.json(brands);
-});
+router.get("/", ctrl.getAllBrands);
 
-router.post("/", validate(brandSchema), async (req, res) => {
-  const brand = await Brand.create(req.body);
-  res.status(201).json(brand);
-});
+router.get("/:id", ctrl.getBrandById);
+
+router.post("/", validate(brandSchema), ctrl.addBrand);
+
+router.delete("/:id", ctrl.removeBrand);
+
+router.put("/:id", validate(brandSchema), ctrl.updateBrand);
 
 export default router;

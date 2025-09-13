@@ -25,8 +25,8 @@ Brand.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    name: { type: DataTypes.STRING(128), allowNull: false, unique: true },
-    image: { type: DataTypes.STRING(128), allowNull: true, unique: false },
+    name: { type: DataTypes.STRING(128), allowNull: false },
+    image: { type: DataTypes.STRING(128), allowNull: true },
   },
   { sequelize, tableName: "brands" }
 );

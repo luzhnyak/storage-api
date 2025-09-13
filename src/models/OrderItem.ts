@@ -8,6 +8,7 @@ interface OrderItemAttributes {
   orderId: number;
   productId: number;
   quantity: number;
+  price: number;
 }
 
 interface OrderItemCreationAttributes
@@ -21,6 +22,7 @@ class OrderItem
   public orderId!: number;
   public productId!: number;
   public quantity!: number;
+  public price!: number;
 }
 
 OrderItem.init(
@@ -30,7 +32,8 @@ OrderItem.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    quantity: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    quantity: { type: DataTypes.FLOAT, allowNull: false },
+    price: { type: DataTypes.FLOAT, allowNull: false },
     orderId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     productId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
   },

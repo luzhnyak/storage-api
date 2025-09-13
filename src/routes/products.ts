@@ -4,17 +4,18 @@ import Brand from "../models/Brand";
 import Category from "../models/Category";
 import { validate } from "../middleware/validate";
 import { productSchema } from "../schemas/productSchema";
+import ctrl from "../controllers/products";
 
 const router = express.Router();
 
-router.get("/", async (_, res) => {
-  const products = await Product.findAll({ include: ["brand", "category"] });
-  res.json(products);
-});
+router.get("/", ctrl.getAllProducts);
 
-router.post("/", validate(productSchema), async (req, res) => {
-  const product = await Product.create(req.body);
-  res.status(201).json(product);
-});
+router.get("/:id", ctrl.getProductById);
+
+router.post("/", validate(productSchema), ctrl.addProduct);
+
+router.delete("/:id", ctrl.removeProduct);
+
+router.put("/:id", validate(productSchema), ctrl.updateProduct);
 
 export default router;
