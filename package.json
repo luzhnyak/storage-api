@@ -1,32 +1,39 @@
 {
-  "name": "template",
-  "version": "0.0.0",
-  "private": true,
+  "name": "storage-api",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node ./server.js",
-    "dev": "cross-env NODE_ENV=development nodemon ./server.js",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js"
+    "dev": "cross-env NODE_ENV=development nodemon src/server.ts",
+    "build": "tsc -p .",
+    "start": "node dist/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luzhnyak/storage-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luzhnyak/storage-api/issues"
+  },
+  "homepage": "https://github.com/luzhnyak/storage-api#readme",
+  "description": "",
   "dependencies": {
-    "cors": "2.8.5",
-    "cross-env": "7.0.3",
-    "dotenv": "^16.4.2",
-    "express": "4.17.1",
-    "joi": "^17.11.0",
-    "mariadb": "^3.2.3",
-    "morgan": "1.10.0",
-    "nanoid": "^3.3.4",
-    "sequelize": "^6.36.0",
-    "sqlite3": "^5.1.6"
+    "cross-env": "^10.0.0",
+    "express": "^5.1.0",
+    "joi": "^18.0.1",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "eslint": "7.19.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-standard": "16.0.3",
-    "eslint-plugin-import": "2.25.3",
+    "@types/express": "^5.0.3",
+    "@types/joi": "^17.2.2",
+    "eslint": "^9.35.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "5.2.0",
-    "nodemon": "2.0.15"
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }
