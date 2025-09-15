@@ -1,5 +1,6 @@
 import express from "express";
 import { sequelize } from "./db";
+import { initAssociations } from "./models/associations";
 import routes from "./routes";
 import { errorHandler } from "./middleware/errorHandler";
 import logger from "morgan";
@@ -21,6 +22,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 
 async function start() {
+  initAssociations();
   await sequelize.sync({ alter: true });
   console.log("Database synced");
   app.listen(PORT, () =>

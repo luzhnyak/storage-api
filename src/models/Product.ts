@@ -1,18 +1,21 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import { sequelize } from "../db";
-import Brand from "./Brand";
-import Category from "./Category";
 
 interface ProductAttributes {
   id: number;
   name: string;
-  description: string;
-  price: number;
-  brandId?: number;
+  sku?: string;
+  description?: string;
+  unit: string;
   categoryId?: number;
+  brandId?: number;
 }
 
-interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {}
+interface ProductCreationAttributes
+  extends Optional<
+    ProductAttributes,
+    "id" | "categoryId" | "sku" | "description"
+  > {}
 
 class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -20,10 +23,11 @@ class Product
 {
   public id!: number;
   public name!: string;
-  public description!: string;
-  public price!: number;
-  public brandId?: number;
+  public sku?: string;
+  public description?: string;
+  public unit!: string;
   public categoryId?: number;
+  public brandId?: number;
 }
 
 Product.init(
@@ -33,14 +37,14 @@ Product.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    name: { type: DataTypes.STRING(128), allowNull: false },
-    description: { type: DataTypes.TEXT, allowNull: false },
-    price: { type: DataTypes.FLOAT, allowNull: false },
+    name: { type: DataTypes.STRING(200), allowNull: false },
+    sku: { type: DataTypes.STRING(100), unique: false },
+    description: { type: DataTypes.TEXT, allowNull: true },
+    unit: { type: DataTypes.STRING(50), allowNull: false },
+    categoryId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+    brandId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
   },
   { sequelize, tableName: "products" }
 );
-
-Product.belongsTo(Brand, { foreignKey: "brandId", as: "brand" });
-Product.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
 
 export default Product;

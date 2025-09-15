@@ -2,7 +2,7 @@ import express from "express";
 import Order from "../models/Order";
 import Product from "../models/Product";
 import OrderItem from "../models/OrderItem";
-import ctrl from "../controllers/orders";
+import ctrl from "../controllers/transactions";
 import { orderItemSchema, orderSchema } from "../schemas/orderSchema";
 import { validate } from "../middleware/validate";
 

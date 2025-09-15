@@ -5,6 +5,7 @@ interface BrandAttributes {
   id: number;
   name: string;
   image: string;
+  country: string;
 }
 
 interface BrandCreationAttributes extends Optional<BrandAttributes, "id"> {}
@@ -16,6 +17,7 @@ class Brand
   public id!: number;
   public name!: string;
   public image!: string;
+  public country!: string;
 }
 
 Brand.init(
@@ -27,6 +29,7 @@ Brand.init(
     },
     name: { type: DataTypes.STRING(128), allowNull: false },
     image: { type: DataTypes.STRING(128), allowNull: true },
+    country: { type: DataTypes.STRING(100), allowNull: true },
   },
   { sequelize, tableName: "brands" }
 );
