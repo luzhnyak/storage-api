@@ -24,6 +24,7 @@ const getTransactionById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const transaction = await Transaction.findByPk(id);
+  console.log(transaction);
 
   if (!transaction) {
     throw new HttpError(404, "Not found");

@@ -1,29 +1,29 @@
-import Order from "../models/Order";
-import OrderItem from "../models/OrderItem";
+import Transaction from "../models/Transaction";
+import TransactionItem from "../models/TransactionItem";
 
-export const refreshSumOrder = async (orderId: number) => {
-  const order = await Order.findByPk(orderId);
+export const refreshSumTransaction = async (TransactionId: number) => {
+  const transaction = await Transaction.findByPk(TransactionId);
 
-  if (!order) return;
+  if (!transaction) return;
 
-  const orderProducts = await OrderItem.findAll({
+  const TransactionProducts = await TransactionItem.findAll({
     where: {
-      orderId: orderId,
+      transactionId: TransactionId,
     },
   });
 
-  const sum = orderProducts.reduce(
+  const sum = TransactionProducts.reduce(
     (total, product) => total + product.quantity * product.price,
     0
   );
 
-  await Order.update(
+  await Transaction.update(
     {
       suma: sum,
     },
     {
       where: {
-        id: orderId,
+        id: TransactionId,
       },
     }
   );

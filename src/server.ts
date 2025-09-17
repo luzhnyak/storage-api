@@ -2,7 +2,7 @@ import express from "express";
 import { sequelize } from "./db";
 import { initAssociations } from "./models/associations";
 import routes from "./routes";
-import { errorHandler } from "./middleware/errorHandler";
+import { errorHandler } from "./middlewares/errorHandler";
 import logger from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";

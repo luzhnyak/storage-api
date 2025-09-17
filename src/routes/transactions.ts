@@ -1,30 +1,35 @@
-import express from "express";
-import Order from "../models/Order";
-import Product from "../models/Product";
-import OrderItem from "../models/OrderItem";
+import { Router } from "express";
+
 import ctrl from "../controllers/transactions";
-import { orderItemSchema, orderSchema } from "../schemas/orderSchema";
-import { validate } from "../middleware/validate";
+import {
+  transactionItemSchema,
+  transactionSchema,
+} from "../schemas/transactionSchema";
+import { validate } from "../middlewares/validate";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", ctrl.getAllOrders);
+router.get("/", ctrl.getAllTransactions);
 
-router.get("/:id", ctrl.getOrderById);
+router.get("/:id", ctrl.getTransactionById);
 
-router.post("/", validate(orderSchema), ctrl.addOrder);
+router.post("/", validate(transactionSchema), ctrl.addTransaction);
 
-router.put("/:id", validate(orderItemSchema), ctrl.addProductToOrder);
+router.put(
+  "/:id",
+  validate(transactionItemSchema),
+  ctrl.addProductToTransaction
+);
 
-router.delete("/:id", ctrl.removeOrder);
-router.delete("/:id/:productId", ctrl.removeProductInOrder);
+router.delete("/:id", ctrl.removeTransaction);
+router.delete("/:id/:productId", ctrl.removeProductInTransaction);
 
-router.put("/:id", validate(orderSchema), ctrl.updateOrder);
+router.put("/:id", validate(transactionSchema), ctrl.updateTransaction);
 
 router.patch(
   "/:id/:productId",
-  validate(orderItemSchema),
-  ctrl.updateProductInOrder
+  validate(transactionItemSchema),
+  ctrl.updateProductInTransaction
 );
 
 export default router;

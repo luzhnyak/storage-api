@@ -1,10 +1,10 @@
-import express from "express";
-import Category from "../models/Category";
-import { validate } from "../middleware/validate";
+import { Router } from "express";
+
+import { validate } from "../middlewares/validate";
 import { categorySchema } from "../schemas/categorySchema";
 import ctrl from "../controllers/categories";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/", ctrl.getAllCategories);
 

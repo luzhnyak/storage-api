@@ -1,12 +1,10 @@
-import express from "express";
-import Product from "../models/Product";
-import Brand from "../models/Brand";
-import Category from "../models/Category";
-import { validate } from "../middleware/validate";
+import { Router } from "express";
+
+import { validate } from "../middlewares/validate";
 import { productSchema } from "../schemas/productSchema";
 import ctrl from "../controllers/products";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/", ctrl.getAllProducts);
 
