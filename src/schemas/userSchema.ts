@@ -11,3 +11,16 @@ export const userRegisterSchema = Joi.object({
   password: Joi.string().min(6).required(),
   role: Joi.string().optional(),
 });
+
+export const userCreateSchema = Joi.object({
+  name: Joi.string().min(2).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  role: Joi.string().optional(),
+});
+
+export const userUpdateSchema = Joi.object({
+  name: Joi.string().min(2).required(),
+  password: Joi.string().min(6).optional(),
+  role: Joi.string().optional(),
+});

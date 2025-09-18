@@ -26,12 +26,12 @@ class TransactionItem
 TransactionItem.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    transactionId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    productId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    transactionId: { type: DataTypes.INTEGER, allowNull: false },
+    productId: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
     unitPrice: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
   },

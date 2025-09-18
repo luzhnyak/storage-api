@@ -31,7 +31,7 @@ export class UserService {
     return user;
   }
 
-  static async addUser(userObj: {
+  static async createUser(userObj: {
     name: string;
     email: string;
     password: string;
@@ -39,6 +39,8 @@ export class UserService {
     const existingUser = await User.findOne({
       where: { email: userObj.email },
     });
+
+    console.log("service userObj:");
 
     if (existingUser) {
       throw new HttpError(409, "User already exists");
@@ -52,5 +54,43 @@ export class UserService {
     });
 
     return newUser;
+  }
+
+  static async updateUser(
+    id: number,
+    userObj: { name?: string; email?: string; password?: string }
+  ) {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      throw new HttpError(404, "User not found");
+    }
+
+    let passwordHash;
+
+    if (userObj.password) {
+      passwordHash = await bcrypt.hash(userObj.password, 10);
+    }
+
+    await User.update(
+      {
+        ...(userObj.name !== undefined && { name: userObj.name }),
+        ...(userObj.email !== undefined && { email: userObj.email }),
+        passwordHash: passwordHash || user.passwordHash,
+      },
+      { where: { id } }
+    );
+
+    return user;
+  }
+
+  static async deleteUser(id: number) {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      throw new HttpError(404, "User not found");
+    }
+
+    await user.destroy();
   }
 }

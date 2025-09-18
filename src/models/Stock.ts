@@ -24,12 +24,12 @@ class Stock
 Stock.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    warehouseId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    productId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    warehouseId: { type: DataTypes.INTEGER, allowNull: false },
+    productId: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.DECIMAL(12, 2), defaultValue: 0 },
   },
   { sequelize, tableName: "stock" }

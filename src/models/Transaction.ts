@@ -49,7 +49,7 @@ class Transaction
 Transaction.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -67,11 +67,11 @@ Transaction.init(
       type: DataTypes.ENUM("draft", "confirmed"),
       defaultValue: "draft",
     },
-    warehouseFromId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
-    warehouseToId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
-    supplierId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
-    customerId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
-    userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+    warehouseFromId: { type: DataTypes.INTEGER, allowNull: true },
+    warehouseToId: { type: DataTypes.INTEGER, allowNull: true },
+    supplierId: { type: DataTypes.INTEGER, allowNull: true },
+    customerId: { type: DataTypes.INTEGER, allowNull: true },
+    userId: { type: DataTypes.INTEGER, allowNull: true },
   },
   { sequelize, tableName: "transactions" }
 );

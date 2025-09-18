@@ -33,7 +33,7 @@ class Product
 Product.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -41,8 +41,8 @@ Product.init(
     sku: { type: DataTypes.STRING(100), unique: false },
     description: { type: DataTypes.TEXT, allowNull: true },
     unit: { type: DataTypes.STRING(50), allowNull: false },
-    categoryId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
-    brandId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+    categoryId: { type: DataTypes.INTEGER, allowNull: true },
+    brandId: { type: DataTypes.INTEGER, allowNull: true },
   },
   { sequelize, tableName: "products" }
 );

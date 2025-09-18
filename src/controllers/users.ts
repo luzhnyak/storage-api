@@ -3,18 +3,12 @@ import { Request, Response } from "express";
 import { HttpError, ctrlWrapper } from "../helpers";
 
 import { UserService } from "../services/userService";
-import { AuthenticatedRequest } from "../types/types";
-import { AuthService } from "../services/authService";
-
-// ============================== Get All
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserService.getAllUsers();
 
   res.json({ items: users });
 };
-
-// ============================== Get by ID
 
 const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -28,49 +22,57 @@ const getUserById = async (req: Request, res: Response) => {
   res.json({ user: user });
 };
 
-// ============================== Register
+const getUserByEmail = async (req: Request, res: Response) => {
+  const { email } = req.params;
 
-const register = async (req: Request, res: Response) => {
-  const body = req.body;
+  if (!email) {
+    throw new HttpError(400, "Missing email");
+  }
 
-  const data = await AuthService.register(body);
+  const user = await UserService.getUserByEmail(email);
 
-  res.json(data);
+  res.json({ user: user });
 };
 
-// ============================== Login
+const createUser = async (req: Request, res: Response) => {
+  const userObj = req.body;
 
-const login = async (req: Request, res: Response) => {
-  const body = req.body;
+  console.log("controller userObj:");
 
-  const data = await AuthService.login(body);
+  const user = await UserService.createUser(userObj);
 
-  res.json(data);
+  res.json({ user: user });
 };
 
-// ============================== Logout
+const updateUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userObj = req.body;
 
-const logout = async (req: Request, res: Response) => {
-  await AuthService.logout();
+  if (!id) {
+    throw new HttpError(400, "Missing id");
+  }
 
-  res.json({ data: "loout" });
+  const user = await UserService.updateUser(+id, userObj);
+
+  res.json({ user: user });
 };
 
-// ============================== Refresh user
+const deleteUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new HttpError(400, "Missing id");
+  }
 
-const refreshUser = async (req: AuthenticatedRequest, res: Response) => {
-  const user = req.user!;
+  const user = await UserService.deleteUser(+id);
 
-  const data = await AuthService.refresh(user);
-
-  res.json(data);
+  res.json({ user: user });
 };
 
 export default {
   getAllUsers: ctrlWrapper(getAllUsers),
   getUserById: ctrlWrapper(getUserById),
-  register: ctrlWrapper(register),
-  login: ctrlWrapper(login),
-  logout: ctrlWrapper(logout),
-  refreshUser: ctrlWrapper(refreshUser),
+  getUserByEmail: ctrlWrapper(getUserByEmail),
+  createUser: ctrlWrapper(createUser),
+  updateUser: ctrlWrapper(updateUser),
+  deleteUser: ctrlWrapper(deleteUser),
 };
