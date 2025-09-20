@@ -1,0 +1,1 @@
+INSERT INTO "main"."users" ("id", "name", "email", "passwordHash", "role", "createdAt", "updatedAt") VALUES ('1', 'Admin', 'admin@mail.com', '$2b$10$xcVrtI6DhSzKT9ivyYNylO8qCV2nMRaO7Z.UEIij80e7BVtS2rR8m', 'admin', '2025-09-19 11:17:44.172 +00:00', '2025-09-19 11:17:44.172 +00:00');

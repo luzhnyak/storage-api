@@ -7,6 +7,8 @@ interface ProductAttributes {
   sku?: string;
   description?: string;
   unit: string;
+  imageUrl?: string;
+  price: number;
   categoryId?: number;
   brandId?: number;
 }
@@ -26,6 +28,8 @@ class Product
   public sku?: string;
   public description?: string;
   public unit!: string;
+  public imageUrl?: string;
+  public price!: number;
   public categoryId?: number;
   public brandId?: number;
 }
@@ -40,7 +44,13 @@ Product.init(
     name: { type: DataTypes.STRING(200), allowNull: false },
     sku: { type: DataTypes.STRING(100), unique: false },
     description: { type: DataTypes.TEXT, allowNull: true },
-    unit: { type: DataTypes.STRING(50), allowNull: false },
+    unit: { type: DataTypes.STRING(50), allowNull: false, defaultValue: "шт." },
+    imageUrl: { type: DataTypes.STRING(200), allowNull: true },
+    price: {
+      type: DataTypes.DECIMAL(12, 2),
+      allowNull: false,
+      defaultValue: 0,
+    },
     categoryId: { type: DataTypes.INTEGER, allowNull: true },
     brandId: { type: DataTypes.INTEGER, allowNull: true },
   },

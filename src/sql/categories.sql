@@ -1,0 +1,6 @@
+﻿INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('1', 'Вудлища', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
+INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('2', 'Приманки', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
+INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('3', 'Шнури, Флюорокарбон, Волосінь', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
+INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('4', 'Аксесуари', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
+INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('5', 'Розхідники', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
+INSERT INTO "main"."categories" ("id", "name", "createdAt", "updatedAt") VALUES ('6', 'Зимова рибалка', '2025-09-18 14:22:59.339 +00:00', '2025-09-18 14:22:59.339 +00:00');
